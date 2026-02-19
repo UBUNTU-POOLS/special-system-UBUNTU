@@ -1,0 +1,4 @@
+__repo_sync__/
+node_modules/
+.env*
+.netlify/
