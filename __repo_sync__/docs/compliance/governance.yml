@@ -1,0 +1,22 @@
+
+governance_framework:
+  version: "1.0.0"
+  model: "MODEL_A_NON_CUSTODIAL"
+  compliance_officer: "TBD"
+  roles:
+    admin:
+      - VIEW_AUDIT_LOG
+      - EXPORT_COMPLIANCE_PACK
+      - MEDIATE_DISPUTES
+    member:
+      - RECORD_INTENT
+      - SIGN_CONSTITUTION
+      - VOUCH_FOR_KINSMAN
+
+automated_controls:
+  hard_gates:
+    - NON_CUSTODIAL_KEYWORD_SCANNER
+    - BIOMETRIC_LIVENESS_ENFORCEMENT
+  integrity:
+    - SHA256_HASH_CHAINING
+    - SQL_IMMUTABILITY_TRIGGERS

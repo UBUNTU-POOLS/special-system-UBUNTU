@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { COLORS } from '../constants';
-import { OptimizedImage } from '../src/components/OptimizedImage';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -159,14 +158,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </header>
       
       {/* Hero spacing */}
-      <div className="w-full border-b border-[#F1F0EE] dark:border-[#3A3D3B]">
-        <OptimizedImage 
+      <div className="w-full h-40 md:h-64 overflow-hidden relative border-b border-[#F1F0EE] dark:border-[#3A3D3B]">
+        <img 
           src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600" 
-          width={1600}
-          height={640}
-          priority={true}
-          className="grayscale opacity-20 dark:opacity-10 scale-110"
-          alt="Community coordination background"
+          className="w-full h-full object-cover grayscale opacity-20 dark:opacity-10 scale-110"
+          alt="Ubuntu Banner"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FDFCFB] dark:to-[#1A1C1B] opacity-60" />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

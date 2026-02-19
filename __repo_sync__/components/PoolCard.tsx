@@ -2,7 +2,6 @@
 import React from 'react';
 import { Pool, PoolStatus, PoolType } from '../types';
 import { useCurrency } from '../contexts/CurrencyContext';
-import { OptimizedImage } from '../src/components/OptimizedImage';
 
 interface PoolCardProps {
   pool: Pool;
@@ -50,14 +49,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool, onClick, onContribute }) => {
         {pool.targetAsset && (
           <div className="bg-[#F9F9F8] dark:bg-[#1A1C1B] p-4 rounded-3xl border border-[#F1F0EE] dark:border-[#3A3D3B] flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0">
-               <OptimizedImage 
-                 src={pool.targetAsset.imageUrl} 
-                 width={48} 
-                 height={48} 
-                 loading="lazy" 
-                 className="w-full h-full grayscale group-hover:grayscale-0 transition-all" 
-                 alt="Target asset" 
-               />
+               <img src={pool.targetAsset.imageUrl} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="Asset" />
             </div>
             <div>
                <p className="text-[8px] font-black text-[#9EA39F] uppercase">Collective Target</p>

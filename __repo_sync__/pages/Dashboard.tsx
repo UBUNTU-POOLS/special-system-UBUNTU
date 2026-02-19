@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MOCK_USER, MOCK_POOLS } from '../constants';
 import PoolCard from '../components/PoolCard';
@@ -8,17 +8,8 @@ import { getUbuntuWisdom, AiResponse } from '../services/ai';
 import LiveSupport from '../components/LiveSupport';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, Radar as RadarComponent, ResponsiveContainer } from 'recharts';
-import { DashboardSkeleton } from '../src/components/SkeletonLoader';
 
 const Dashboard: React.FC = () => {
-  return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <DashboardContent />
-    </Suspense>
-  );
-};
-
-const DashboardContent: React.FC = () => {
   const navigate = useNavigate();
   const { currency, setCurrency, formatValue } = useCurrency();
   const [showInsights, setShowInsights] = useState(false);

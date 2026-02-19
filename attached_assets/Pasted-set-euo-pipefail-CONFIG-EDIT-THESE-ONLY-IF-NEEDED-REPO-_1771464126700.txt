@@ -1,0 +1,61 @@
+set -euo pipefail
+
+# ===== CONFIG (EDIT THESE ONLY IF NEEDED) =====
+REPO_URL="https://github.com/ivemino35-droid/how-i-met-your-mother.git"
+BRANCH="main"
+ZIP="./special-system-UBUNTU.zip"   # <-- change if your zip file name differs
+WORKDIR="./repo"
+TMP="/tmp/zipmerge"
+
+# ===== 1) Fresh clone (clean, avoids your current messy working tree) =====
+rm -rf "$WORKDIR"
+git clone --branch "$BRANCH" "$REPO_URL" "$WORKDIR"
+
+# ===== 2) Unzip amended build into temp =====
+rm -rf "$TMP"
+mkdir -p "$TMP"
+unzip -o "$ZIP" -d "$TMP" >/dev/null
+
+# ===== 3) Detect project root inside zip (find package.json) =====
+ZIPROOT="$(find "$TMP" -maxdepth 4 -type f -name package.json -print -quit | xargs -r dirname || true)"
+if [ -z "${ZIPROOT:-}" ]; then
+  echo "ERROR: Could not find package.json inside the zip."
+  echo "Open $TMP and check where the project root is."
+  exit 1
+fi
+echo "Detected zip project root: $ZIPROOT"
+
+# ===== 4) Ensure .gitignore includes node_modules (prevents huge change sets) =====
+touch "$WORKDIR/.gitignore"
+grep -qxF "node_modules/" "$WORKDIR/.gitignore" || echo "node_modules/" >> "$WORKDIR/.gitignore"
+grep -qxF ".env" "$WORKDIR/.gitignore" || echo ".env" >> "$WORKDIR/.gitignore"
+grep -qxF ".vercel/" "$WORKDIR/.gitignore" || echo ".vercel/" >> "$WORKDIR/.gitignore"
+grep -qxF ".netlify/" "$WORKDIR/.gitignore" || echo ".netlify/" >> "$WORKDIR/.gitignore"
+grep -qxF "dist/" "$WORKDIR/.gitignore" || echo "dist/" >> "$WORKDIR/.gitignore"
+
+# ===== 5) Overlay zip contents into repo (keeps git history, no restart) =====
+# Excludes secrets, deps, and git metadata
+rsync -av --delete \
+  --exclude='.git' \
+  --exclude='node_modules' \
+  --exclude='.env' \
+  --exclude='.vercel' \
+  --exclude='.netlify' \
+  "$ZIPROOT/" "$WORKDIR/"
+
+# ===== 6) If node_modules was ever committed, untrack it (without deleting locally) =====
+cd "$WORKDIR"
+if git ls-files | grep -q '^node_modules/'; then
+  echo "node_modules is tracked in git; removing from tracking..."
+  git rm -r --cached node_modules || true
+fi
+
+# ===== 7) Commit + push =====
+git status --porcelain
+git add -A
+git commit -m "Integrate amended build (zip overlay) + repo hygiene" || echo "No changes to commit."
+
+# If Replit asks for auth, you must push using a GitHub token.
+git push origin "$BRANCH"
+
+echo "✅ Done. GitHub repo updated. Now connect this repo to Vercel for deployment."
